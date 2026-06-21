@@ -1,8 +1,0 @@
-fastapi
-uvicorn[standard]
-python-multipart
-python-telegram-bot==21.*
-psycopg2-binary
-groq
-google-generativeai
-python-docx
