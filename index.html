@@ -1,133 +1,727 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Brief AI</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-  :root{--ink:#1F2421;--olive:#3C4A3A;--burgundy:#7C2D3B;--burgundy-soft:#9A3F4E;--parchment:#F4F1EA;--gold:#B89B5E;--ink-65:rgba(244,241,234,0.65);--ink-40:rgba(244,241,234,0.40);--radius:14px;}
-  *{box-sizing:border-box;}html,body{margin:0;padding:0;height:100%;}
-  body{background:var(--ink);color:var(--parchment);font-family:-apple-system,BlinkMacSystemFont,"Inter",sans-serif;display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden;}
-  header{padding:18px 20px 14px;border-bottom:1px solid rgba(184,155,94,0.18);display:flex;align-items:baseline;justify-content:space-between;flex-shrink:0;}
-  .brand{font-family:"Georgia","Iowan Old Style",serif;font-size:21px;letter-spacing:0.3px;font-weight:600;}
-  .brand small{display:block;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold);margin-top:2px;font-weight:500;}
-  #usagePill{font-size:11px;color:var(--ink-65);border:1px solid rgba(184,155,94,0.3);border-radius:20px;padding:5px 11px;white-space:nowrap;}
-  #thread{flex:1;overflow-y:auto;padding:18px 16px 12px;display:flex;flex-direction:column;gap:10px;}
-  .row{display:flex;}.row.from-bot{justify-content:flex-start;}.row.from-user{justify-content:flex-end;}
-  .card{position:relative;max-width:84%;background:var(--olive);border:1px solid rgba(184,155,94,0.22);border-radius:var(--radius);padding:13px 15px 12px;font-size:14.5px;line-height:1.45;animation:rise .28s ease both;}
-  .card::before{content:"";position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 14px 14px 0;border-color:transparent var(--ink) transparent transparent;opacity:0.5;}
-  .card .seal{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--burgundy-soft);margin-right:7px;vertical-align:middle;}
-  .filechip{display:flex;align-items:center;gap:9px;max-width:78%;background:var(--burgundy);border-radius:var(--radius);padding:10px 14px;font-size:13.5px;animation:rise .28s ease both;}
-  .filechip .ext{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:0.5px;background:rgba(0,0,0,0.22);border-radius:5px;padding:3px 6px;color:var(--gold);}
-  .filechip .meta{color:rgba(244,241,234,0.7);font-size:11.5px;}
-  @keyframes rise{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-  .typing{display:inline-flex;gap:4px;align-items:center;padding:4px 0;}
-  .typing span{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:blink 1.1s infinite ease-in-out;}
-  .typing span:nth-child(2){animation-delay:.15s;}.typing span:nth-child(3){animation-delay:.3s;}
-  @keyframes blink{0%,80%,100%{opacity:.25;}40%{opacity:1;}}
-  .chiprow{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
-  .chip{border:1px solid rgba(184,155,94,0.4);background:transparent;color:var(--parchment);border-radius:20px;padding:7px 13px;font-size:13px;cursor:pointer;transition:background .15s,transform .1s;}
-  .chip:active{transform:scale(0.96);}.chip:hover{background:rgba(184,155,94,0.14);}
-  #composer{flex-shrink:0;padding:12px 14px calc(14px + env(safe-area-inset-bottom));border-top:1px solid rgba(184,155,94,0.18);display:flex;gap:10px;align-items:center;background:var(--ink);}
-  #attachBtn{width:42px;height:42px;border-radius:50%;background:var(--olive);border:1px solid rgba(184,155,94,0.3);color:var(--gold);font-size:19px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
-  #attachBtn:active{transform:scale(0.94);}
-  #hint{flex:1;color:var(--ink-40);font-size:13px;}
-  #fileInput{display:none;}
-  .progress-track{margin-top:9px;height:3px;border-radius:2px;background:rgba(0,0,0,0.25);overflow:hidden;}
-  .progress-fill{height:100%;width:30%;background:var(--gold);animation:slide 1.3s infinite ease-in-out;}
-  @keyframes slide{0%{transform:translateX(-100%);}100%{transform:translateX(330%);}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Skrepka AI</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root {
+      --ink: #1F2421;
+      --olive: #3C4A3A;
+      --burgundy: #7C2D3B;
+      --burgundy-soft: #9A3F4E;
+      --parchment: #F4F1EA;
+      --gold: #B89B5E;
+      --ink-65: rgba(244,241,234,.65);
+      --ink-40: rgba(244,241,234,.40);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      height: 100%;
+    }
+
+    body {
+      background: var(--ink);
+      color: var(--parchment);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid rgba(184,155,94,.18);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-family: Georgia, "Iowan Old Style", serif;
+      font-size: 21px;
+      letter-spacing: .3px;
+      font-weight: 600;
+    }
+
+    .brand small {
+      display: block;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 11px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    #usagePill {
+      font-size: 11px;
+      color: var(--ink-65);
+      border: 1px solid rgba(184,155,94,.3);
+      border-radius: 20px;
+      padding: 6px 10px;
+      text-align: center;
+      white-space: normal;
+      max-width: 55%;
+    }
+
+    #thread {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .row {
+      display: flex;
+    }
+
+    .from-bot {
+      justify-content: flex-start;
+    }
+
+    .from-user {
+      justify-content: flex-end;
+    }
+
+    .card {
+      position: relative;
+      max-width: 92%;
+      background: var(--olive);
+      border: 1px solid rgba(184,155,94,.22);
+      border-radius: var(--radius);
+      padding: 13px 15px 12px;
+      font-size: 14.5px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .card .seal {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--burgundy-soft);
+      margin-right: 7px;
+      vertical-align: middle;
+    }
+
+    .filechip {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      max-width: 90%;
+      background: var(--burgundy);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 13.5px;
+      overflow-wrap: anywhere;
+    }
+
+    .filechip .ext {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 10px;
+      letter-spacing: .5px;
+      background: rgba(0,0,0,.22);
+      border-radius: 5px;
+      padding: 3px 6px;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .filechip .meta {
+      color: rgba(244,241,234,.7);
+      font-size: 11.5px;
+      margin-top: 3px;
+    }
+
+    .chiprow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      border: 1px solid rgba(184,155,94,.4);
+      background: transparent;
+      color: var(--parchment);
+      border-radius: 20px;
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .chip:active {
+      transform: scale(.97);
+    }
+
+    .chip:hover {
+      background: rgba(184,155,94,.14);
+    }
+
+    .chip:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .muted {
+      color: var(--ink-65);
+      font-size: 12px;
+    }
+
+    #bottomMenu {
+      display: none;
+      flex-shrink: 0;
+      padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(184,155,94,.18);
+      gap: 8px;
+      flex-wrap: wrap;
+      background: var(--ink);
+    }
+
+    #bottomMenu.visible {
+      display: flex;
+    }
+
+    .menu-btn {
+      flex: 1;
+      min-width: 130px;
+      border: 1px solid rgba(184,155,94,.4);
+      background: transparent;
+      color: var(--parchment);
+      border-radius: 20px;
+      padding: 10px 12px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .menu-btn.primary {
+      background: var(--burgundy);
+      border-color: var(--burgundy);
+    }
+
+    .menu-btn:active {
+      transform: scale(.98);
+    }
+
+    #composer {
+      flex-shrink: 0;
+      padding: 12px 14px calc(14px + env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(184,155,94,.18);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: var(--ink);
+    }
+
+    #attachBtn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--olive);
+      border: 1px solid rgba(184,155,94,.3);
+      color: var(--gold);
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    #attachBtn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    #hint {
+      flex: 1;
+      color: var(--ink-40);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .progress-track {
+      margin-top: 10px;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(0,0,0,.25);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 30%;
+      background: var(--gold);
+      animation: slide 1.3s infinite ease-in-out;
+    }
+
+    @keyframes slide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(330%); }
+    }
+
+    a {
+      color: var(--gold);
+    }
+  </style>
 </head>
+
 <body>
-<header>
-  <div class="brand">Brief AI<small>Голос → документ</small></div>
-  <div id="usagePill">…</div>
-</header>
-<div id="thread"></div>
-<div id="composer">
-  <div id="attachBtn">＋</div>
-  <input type="file" id="fileInput" accept="audio/*,.m4a,.mp3,.wav,.ogg,.aac,.mp4">
-  <div id="hint">Прикріпіть запис — без обмежень за розміром</div>
-</div>
+  <header>
+    <div class="brand">
+      Skrepka AI
+      <small>Голос → документ</small>
+    </div>
+    <div id="usagePill">Завантаження статусу...</div>
+  </header>
+
+  <div id="thread"></div>
+
+  <div id="bottomMenu">
+    <button class="menu-btn" id="menuStatus" type="button">💫 Мій тариф</button>
+  </div>
+
+  <div id="composer">
+    <button id="attachBtn" type="button" aria-label="Прикріпити аудіо">
+      ＋
+    </button>
+
+    <input
+      type="file"
+      id="fileInput"
+      accept="audio/*,.m4a,.mp3,.wav,.ogg,.aac,.mp4"
+    >
+
+    <div id="hint">
+      Прикріпіть запис — зустріч, переговори або голосову нотатку.
+    </div>
+  </div>
+
 <script>
-const tg = window.Telegram?.WebApp; tg?.ready(); tg?.expand();
-const API_BASE = "https://brief-miniapp-backend.onrender.com";
+"use strict";
+
+const tg = window.Telegram?.WebApp;
+tg?.ready();
+tg?.expand();
+
+const API_BASE = "https://skrepka-miniapp-backend.onrender.com";
+
 const DOC_TYPES = [
-  { id: "narada",         label: "📋 Нарада" },
+  { id: "narada", label: "📋 Нарада" },
   { id: "client_summary", label: "📨 Резюме для клієнта" },
-  { id: "ideas",          label: "🧠 Структурувати ідеї" },
-  { id: "transcript",     label: "📝 Транскрипція" },
-  { id: "audit",          label: "🔍 Аудит дзвінка менеджера" },
+  { id: "ideas", label: "🧠 Структурувати ідеї" },
+  { id: "transcript", label: "📝 Транскрипція" },
+  { id: "audit", label: "🔍 Аудит дзвінка менеджера" }
 ];
+
 const thread = document.getElementById("thread");
 const fileInput = document.getElementById("fileInput");
 const attachBtn = document.getElementById("attachBtn");
 const usagePill = document.getElementById("usagePill");
+const bottomMenu = document.getElementById("bottomMenu");
+const hint = document.getElementById("hint");
+
 let currentUploadId = null;
-function scrollDown(){ thread.scrollTop = thread.scrollHeight; }
-function botCard(html){
-  const row = document.createElement("div"); row.className = "row from-bot";
-  row.innerHTML = `<div class="card"><span class="seal"></span>${html}</div>`;
-  thread.appendChild(row); scrollDown(); return row.querySelector(".card");
+let statusData = null;
+let busy = false;
+
+function scrollDown() {
+  thread.scrollTop = thread.scrollHeight;
 }
-function userFileChip(name, sizeMb){
-  const ext = (name.split(".").pop()||"audio").toUpperCase();
-  const row = document.createElement("div"); row.className = "row from-user";
-  row.innerHTML = `<div class="filechip"><span class="ext">${ext}</span><div><div>${name}</div><div class="meta">${sizeMb.toFixed(1)} МБ</div></div></div>`;
-  thread.appendChild(row); scrollDown();
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[ch]);
 }
-function typingCard(){ return botCard(`<span class="typing"><span></span><span></span><span></span></span>`); }
-botCard("Надішліть аудіозапис — зустрічі, переговорів, голосову нотатку. Розмір файлу не обмежений.");
-async function loadStatus(){
-  try{
-    const res = await fetch(`${API_BASE}/api/status`, { headers: { "X-Telegram-InitData": tg?.initData || "" } });
-    const d = await res.json();
-    if (d.is_subscribed) {
-      let pill = `Brief AI до ${d.subscription_until}`;
-      if (d.audit_credits !== undefined) pill += ` · 🔍 ${d.audit_credits}`;
-      usagePill.textContent = pill;
-    } else { usagePill.textContent = `Безкоштовно: ${d.remaining} з ${d.free_limit}`; }
-  } catch(e){ usagePill.textContent = ""; }
+
+function botCard(html) {
+  const row = document.createElement("div");
+  row.className = "row from-bot";
+
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `<span class="seal"></span>${html}`;
+
+  row.appendChild(card);
+  thread.appendChild(row);
+
+  scrollDown();
+  return card;
 }
-loadStatus();
-attachBtn.addEventListener("click", () => fileInput.click());
-fileInput.addEventListener("change", async (e) => {
-  const file = e.target.files[0]; if (!file) return;
-  userFileChip(file.name, file.size/(1024*1024));
-  const status = typingCard();
-  status.innerHTML = `<span class="seal"></span>Завантажую запис…<div class="progress-track"><div class="progress-fill"></div></div>`;
-  try{
-    const form = new FormData(); form.append("file", file);
-    const res = await fetch(`${API_BASE}/api/upload`, { method: "POST", headers: { "X-Telegram-InitData": tg?.initData || "" }, body: form });
-    const data = await res.json();
-    if (!res.ok) { status.innerHTML = `<span class="seal"></span>${data.error||data.detail||"Помилка завантаження."}`; return; }
-    currentUploadId = data.upload_id;
-    status.innerHTML = `<span class="seal"></span>🎙 Запис отримано. Що підготувати?
-      <div class="chiprow">${DOC_TYPES.map(d=>`<button class="chip" data-doc="${d.id}">${d.label}</button>`).join("")}</div>`;
-    status.querySelectorAll(".chip").forEach(btn => {
-      btn.addEventListener("click", () => { btn.closest(".chiprow").remove(); generateDoc(btn.dataset.doc); });
+
+function userFileChip(name, sizeMb) {
+  const row = document.createElement("div");
+  row.className = "row from-user";
+
+  const chip = document.createElement("div");
+  chip.className = "filechip";
+
+  const ext = document.createElement("span");
+  ext.className = "ext";
+  ext.textContent = (name.split(".").pop() || "audio").toUpperCase();
+
+  const info = document.createElement("div");
+
+  const filename = document.createElement("div");
+  filename.textContent = name;
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  meta.textContent = `${sizeMb.toFixed(1)} МБ`;
+
+  info.appendChild(filename);
+  info.appendChild(meta);
+
+  chip.appendChild(ext);
+  chip.appendChild(info);
+
+  row.appendChild(chip);
+  thread.appendChild(row);
+
+  scrollDown();
+}
+
+function showProgress(card, text) {
+  card.innerHTML = `
+    <span class="seal"></span>
+    ${escapeHTML(text)}
+    <div class="progress-track">
+      <div class="progress-fill"></div>
+    </div>
+  `;
+}
+
+function authHeaders(extra = {}) {
+  return {
+    "X-Telegram-InitData": tg?.initData || "",
+    ...extra
+  };
+}
+
+function showBottomMenu() {
+  bottomMenu.classList.add("visible");
+}
+
+function hideBottomMenu() {
+  bottomMenu.classList.remove("visible");
+}
+
+function showWelcome() {
+  botCard(`
+    <strong>Skrepka AI</strong><br><br>
+    Ваш AI-секретар перетворює аудіозаписи на готові документи.<br><br>
+    🎙 Надішліть запис зустрічі, переговорів або голосову нотатку.
+    <div class="chiprow">
+      <button class="chip" id="welcomeUpload" type="button">
+        📎 Завантажити запис
+      </button>
+    </div>
+  `);
+
+  document.getElementById("welcomeUpload")
+    .addEventListener("click", () => {
+      if (!busy) fileInput.click();
     });
-  } catch(err){ status.innerHTML = `<span class="seal"></span>Помилка мережі.`; }
+
+  showBottomMenu();
+  hint.textContent = "Прикріпіть аудіозапис";
+}
+
+async function readResponse(response) {
+  const raw = await response.text();
+  let data = {};
+
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch {
+    data = { detail: raw || "Не вдалося прочитати відповідь сервера." };
+  }
+
+  if (!response.ok) {
+    throw new Error(data.detail || `Помилка сервера: ${response.status}`);
+  }
+
+  return data;
+}
+
+async function loadStatus() {
+  try {
+    const response = await fetch(`${API_BASE}/api/status`, {
+      headers: authHeaders()
+    });
+
+    const data = await readResponse(response);
+    statusData = data;
+
+    const credits = Number(data.audit_credits || 0);
+
+    if (data.is_subscribed) {
+      usagePill.textContent =
+        `Підписка до ${data.subscription_until} · 🔍 ${credits} аудитів`;
+    } else {
+      usagePill.textContent =
+        `Безкоштовно: ${data.remaining}/${data.free_limit} · 🔍 ${credits} аудитів`;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Помилка завантаження статусу:", error);
+    usagePill.textContent = "Статус недоступний";
+    return null;
+  }
+}
+
+function showStatus() {
+  if (!statusData) {
+    botCard("Не вдалося отримати інформацію про тариф. Спробуйте оновити статус.");
+    return;
+  }
+
+  const data = statusData;
+
+  const subscriptionText = data.is_subscribed
+    ? `🟢 Підписка активна до ${escapeHTML(data.subscription_until)}.`
+    : `🔴 Підписка не активна.<br>Безкоштовних обробок залишилося: ${data.remaining} з ${data.free_limit}.`;
+
+  botCard(`
+    <strong>💫 Мій тариф</strong><br><br>
+    ${subscriptionText}<br><br>
+    🔍 Кредитів на аудит: ${Number(data.audit_credits || 0)}<br><br>
+    Основні функції доступні за підпискою за ${Number(data.price_sub || 750)} ⭐ на 30 днів.<br><br>
+    Аудит дзвінків купується окремо і доступний без підписки.
+  `);
+
+  showBottomMenu();
+}
+
+function resetToMenu() {
+  if (busy) return;
+
+  currentUploadId = null;
   fileInput.value = "";
-});
-async function generateDoc(docType){
-  if (!currentUploadId) return;
-  const status = typingCard();
-  status.innerHTML = `<span class="seal"></span>Розпізнаю запис та готую документ…<div class="progress-track"><div class="progress-fill"></div></div>`;
-  try{
-    const res = await fetch(`${API_BASE}/api/generate`, {
-      method: "POST", headers: { "Content-Type": "application/json", "X-Telegram-InitData": tg?.initData || "" },
-      body: JSON.stringify({ upload_id: currentUploadId, doc_type: docType })
-    });
-    const data = await res.json();
-    if (!res.ok) { status.innerHTML = `<span class="seal"></span>${data.error||data.detail||"Помилка."}`; return; }
-    let msg = "✨ Готово! Документ надіслано в чат з ботом 📨";
-    if (data.audit_credits !== undefined) msg += `<br><br>🔍 Залишилось кредитів: ${data.audit_credits}`;
-    status.innerHTML = `<span class="seal"></span>${msg}`;
-    currentUploadId = null; loadStatus();
-  } catch(err){ status.innerHTML = `<span class="seal"></span>Помилка обробки.`; }
+  thread.innerHTML = "";
+  hint.textContent = "Прикріпіть аудіозапис";
+
+  showWelcome();
+  loadStatus();
 }
+
+attachBtn.addEventListener("click", () => {
+  if (!busy) fileInput.click();
+});
+
+fileInput.addEventListener("change", async () => {
+  const file = fileInput.files?.[0];
+
+  if (!file || busy) return;
+
+  if (!tg?.initData) {
+    botCard("Не вдалося підтвердити користувача Telegram. Відкрийте Mini App через Telegram-бота.");
+    fileInput.value = "";
+    return;
+  }
+
+  busy = true;
+  attachBtn.disabled = true;
+  currentUploadId = null;
+
+  userFileChip(file.name, file.size / (1024 * 1024));
+
+  const status = botCard("");
+  showProgress(status, "Завантажую запис...");
+
+  try {
+    const form = new FormData();
+    form.append("file", file);
+
+    const response = await fetch(`${API_BASE}/api/upload`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: form
+    });
+
+    const data = await readResponse(response);
+    currentUploadId = data.upload_id;
+
+    status.innerHTML = `
+      <span class="seal"></span>
+      🎙 Запис отримано. Що підготувати?
+      <div class="chiprow">
+        ${DOC_TYPES.map(doc => `
+          <button
+            class="chip"
+            type="button"
+            data-doc="${doc.id}"
+          >${escapeHTML(doc.label)}</button>
+        `).join("")}
+      </div>
+      <div class="muted" style="margin-top:10px">
+        Аудит дзвінка можна придбати окремо від підписки.
+      </div>
+    `;
+
+    status.querySelectorAll("[data-doc]").forEach(button => {
+      button.addEventListener("click", () => {
+        if (!busy || !currentUploadId) return;
+
+        status.querySelectorAll("[data-doc]").forEach(item => {
+          item.disabled = true;
+        });
+
+        generateDoc(button.dataset.doc, status);
+      });
+    });
+
+    showBottomMenu();
+  } catch (error) {
+    console.error("Помилка завантаження:", error);
+
+    status.innerHTML = `
+      <span class="seal"></span>
+      ❌ ${escapeHTML(error.message || "Помилка завантаження.")}
+      <div class="chiprow">
+        <button class="chip" id="retryUpload" type="button">
+          🔄 Спробувати знову
+        </button>
+      </div>
+    `;
+
+    document.getElementById("retryUpload")
+      .addEventListener("click", () => {
+        if (!busy) fileInput.click();
+      });
+
+    showBottomMenu();
+    busy = false;
+    attachBtn.disabled = false;
+  } finally {
+    fileInput.value = "";
+    hint.textContent = "Оберіть тип документа";
+  }
+});
+
+async function generateDoc(docType, status) {
+  if (!currentUploadId || !busy) return;
+
+  const uploadId = currentUploadId;
+
+  showProgress(status, "Розпізнаю запис і готую документ...");
+
+  try {
+    const response = await fetch(`${API_BASE}/api/generate`, {
+      method: "POST",
+      headers: authHeaders({
+        "Content-Type": "application/json"
+      }),
+      body: JSON.stringify({
+        upload_id: uploadId,
+        doc_type: docType
+      })
+    });
+
+    const data = await readResponse(response);
+
+    let message;
+
+    if (docType === "audit") {
+      message = `
+        <strong>✨ Аудит готовий!</strong><br><br>
+        Документ .docx надіслано в чат з ботом Telegram.<br><br>
+        🔍 Залишилося кредитів на аудит: ${Number(data.audit_credits || 0)}
+      `;
+    } else {
+      message = `
+        <strong>✨ Документ сформовано!</strong><br><br>
+        Документ .docx надіслано в чат з ботом Telegram.<br><br>
+        Перевірте цифри, імена та посилання перед використанням.
+      `;
+    }
+
+    status.innerHTML = `<span class="seal"></span>${message}`;
+
+    currentUploadId = null;
+
+    await loadStatus();
+
+    status.innerHTML += `
+      <div class="muted" style="margin-top:10px">
+        Можете завантажити наступний запис або відкрити меню нижче.
+      </div>
+    `;
+
+    showBottomMenu();
+    hint.textContent = "Запис оброблено. Можна завантажити наступний.";
+
+    tg?.HapticFeedback?.notificationOccurred("success");
+  } catch (error) {
+    console.error("Помилка обробки:", error);
+
+    status.innerHTML = `
+      <span class="seal"></span>
+      ❌ <strong>Не вдалося обробити запис</strong><br><br>
+      ${escapeHTML(error.message || "Сталася помилка сервера.")}
+      <div class="chiprow">
+        <button class="chip" id="retryNewFile" type="button">
+          📎 Завантажити інший запис
+        </button>
+      </div>
+    `;
+
+    currentUploadId = null;
+
+    document.getElementById("retryNewFile")
+      .addEventListener("click", () => {
+        if (!busy) fileInput.click();
+      });
+
+    await loadStatus();
+    showBottomMenu();
+
+    tg?.HapticFeedback?.notificationOccurred("error");
+  } finally {
+    busy = false;
+    attachBtn.disabled = false;
+    scrollDown();
+  }
+}
+
+document.getElementById("menuStatus")
+  .addEventListener("click", async () => {
+    await loadStatus();
+    showStatus();
+  });
+
+showWelcome();
+loadStatus();
 </script>
 </body>
 </html>
