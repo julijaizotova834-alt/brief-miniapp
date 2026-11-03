@@ -328,7 +328,7 @@ const tg = window.Telegram?.WebApp;
 tg?.ready();
 tg?.expand();
 
-const API_BASE = "https://skrepka-miniapp-backend.onrender.com";
+const API_BASE = "https://brief-miniapp-backend.onrender.com";
 
 const DOC_TYPES = [
   { id: "narada", label: "📋 Нарада" },
@@ -517,7 +517,7 @@ function showStatus() {
     ${subscriptionText}<br><br>
     🔍 Кредитів на аудит: ${Number(data.audit_credits || 0)}<br><br>
     Основні функції доступні за підпискою за ${Number(data.price_sub || 750)} ⭐ на 30 днів.<br><br>
-    Аудит дзвінків купується окремо і доступний без підписки.
+    Аудит дзвінків купується окремо та доступний без підписки.
   `);
 
   showBottomMenu();
