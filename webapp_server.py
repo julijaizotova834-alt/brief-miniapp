@@ -27,7 +27,7 @@ if not TELEGRAM_TOKEN:
 ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "*")
 bot = Bot(token=TELEGRAM_TOKEN) if TELEGRAM_TOKEN else None
 
-app = FastAPI(title="Skrepka AI Mini App backend")
+app = FastAPI(title="Brief AI Mini App backend")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[ALLOWED_ORIGIN] if ALLOWED_ORIGIN != "*" else ["*"],
