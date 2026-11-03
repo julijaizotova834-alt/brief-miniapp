@@ -1,4 +1,4 @@
-"""Skrepka AI Mini App backend (українська версія)."""
+"""BRIEF AI Mini App backend (українська версія)."""
 import os
 import hmac
 import hashlib
